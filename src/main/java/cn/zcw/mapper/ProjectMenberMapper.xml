@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace表示命名空间 -->
+<mapper namespace="cn.zcw.mapper.ProjectMenberMapper">
+
+    <!-- 添加表数据 -->
+    <insert id="addProjectMenber" parameterType="cn.zcw.bean.ProjectMenber">
+       insert into t_project_menber(projectid,memberid,introduce,
+       particulars,contactTel,customerTel) values(#{projectid},#{memberid},
+       #{introduce},#{particulars},#{contactTel},#{customerTel})
+   </insert>
+</mapper>

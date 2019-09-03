@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keys" content="">
+    <meta name="author" content="">
+	<link rel="stylesheet" href="../bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../css/font-awesome.min.css">
+	<link rel="stylesheet" href="../css/login.css">
+	<style>
+
+	</style>
+  </head>
+  <body>
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <div><a class="navbar-brand" href="index.html" style="font-size:32px;">众筹网-创意产品众筹平台</a></div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+
+      <form id="userFrom" class="form-signin" action="/reg.do" role="form" method="post">
+        <h2 class="form-signin-heading"><i class="glyphicon glyphicon-log-in"></i> 用户注册</h2>
+		  <div class="form-group has-success has-feedback">
+			<input type="text" name="loginacct" onblur="regSelect()" class="form-control" id="loginacct" placeholder="请输入登录账号" autofocus>
+			<span class="glyphicon glyphicon-user form-control-feedback"></span>
+		  </div>
+          <div class="form-group has-success has-feedback">
+              <input type="text" name="username" class="form-control" id="username" placeholder="请输入用户名" autofocus>
+              <span class="glyphicon glyphicon-user form-control-feedback"></span>
+          </div>
+
+		  <div class="form-group has-success has-feedback">
+			<input type="password" name="userpswd" class="form-control" id="userpswd" placeholder="请输入登录密码" style="margin-top:10px;">
+			<span class="glyphicon glyphicon-lock form-control-feedback"></span>
+		  </div>
+          <div class="form-group has-success has-feedback">
+              <input type="password" name="reuserpswd" class="form-control" id="reuserpswd" placeholder="请输入登录密码" style="margin-top:10px;">
+              <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+          </div>
+		  <div class="form-group has-success has-feedback">
+			<input type="text" name="email" class="form-control" id="email" placeholder="请输入邮箱地址" style="margin-top:10px;">
+			<span class="glyphicon glyphicon glyphicon-envelope form-control-feedback"></span>
+		  </div>
+		  <div class="form-group has-success has-feedback">
+			<select class="form-control" >
+                <option>会员</option>
+                <option>管理</option>
+            </select>
+		  </div>
+        <div class="checkbox">
+          <label>
+            忘记密码
+          </label>
+          <label style="float:right">
+            <a href="login.html">我有账号</a>
+          </label>
+        </div>
+        <a class="btn btn-lg btn-success btn-block" onclick="fromSubmit()"  > 注册</a>
+      </form>
+    </div>
+    <script src="../jquery/jquery-2.1.1.min.js"></script>
+    <script src="../bootstrap/js/bootstrap.min.js"></script>
+    <script src="../jquery/layer/layer.js"></script>
+    <script type="text/javascript">
+        function fromSubmit(){
+            var loginacct = $("#loginacct").val();
+            var username = $("#username").val();
+            var userpswd = $("#userpswd").val();
+            var reuserpswd = $("#reuserpswd").val();
+            var email = $("#email").val();
+            if(loginacct==""){
+                layer.msg("账号不能为空！",{time:1000,icon:5,shift:6},function () {
+                    loginacct.focus();
+                })
+                return;
+            }
+            if(username==""){
+                layer.msg("用户名不能为空！",{time:1000,icon:5,shift:6},function () {
+                    username.focus();
+                })
+                return;
+            }
+            if(userpswd==""){
+                layer.msg("密码不能为空！",{time:1000,icon:5,shift:6},function () {
+                    userpswd.focus();
+                })
+                return;
+            }
+            if( reuserpswd==""|| reuserpswd!= userpswd){
+                layer.msg("两次输入的密码不一致！",{time:1000,icon:5,shift:6},function () {
+                    reuserpswd.focus();
+                })
+                return;
+            }
+            var t = /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;//邮箱验证正则表达式
+            if( !t.test(email)||email==""){
+                layer.msg("邮箱格式不正确！",{time:1000,icon:5,shift:6},function () {
+                    email.focus();
+                })
+                return;
+            }
+
+            var formObj=document.getElementById("userFrom");
+            formObj.submit();//手动提交表单
+        }
+
+        function regSelect() {
+            var loginacct = $("#loginacct");
+            if(loginacct.val()==""){
+                layer.msg("账号不能为空！",{time:1000,icon:5,shift:6},function () {
+                    loginacct.focus();
+                })
+                return;
+            }
+
+            $.ajax({
+                url:"/member/regSelect.do",
+                type:"POST",
+                data:{"loginacct":loginacct.val()},
+                success:function(result){
+                    if(result.success){
+                        layer.msg("账号已存在！",{time:2000,icon:5,shift:6},function () {
+                            //loginacct.focus();
+                        })
+                    }
+                }
+            })
+        }
+
+    </script>
+  </body>
+</html>

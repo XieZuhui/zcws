@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="UTF-8">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link rel="stylesheet" href="../bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <style>
+        .tree li {
+            list-style-type: none;
+            cursor:pointer;
+        }
+        .tree-closed {
+            height : 40px;
+        }
+        .tree-expanded {
+            height : auto;
+        }
+    </style>
+</head>
+
+<body>
+<div id="contentText">
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title"><i class="glyphicon glyphicon-th"></i> 用户管理数据列表</h3>
+        </div>
+        <div class="panel-body">
+            <!-- 用户查询表单 -->
+            <form class="form-inline" role="form" style="float:left;">
+                <div class="form-group has-feedback">
+                    <div class="input-group">
+                        <div class="input-group-addon">查询条件</div>
+                        <input id="queryTest" class="form-control has-success" type="text" placeholder="请输入查询条件">
+                    </div>
+                </div>
+                <button id="queryButton" type="button" class="btn btn-warning">
+                    <i class="glyphicon glyphicon-search"></i> 查询</button>
+            </form>
+            <button type="button" class="btn btn-danger" style="float:right;margin-left:10px;"><i class=" glyphicon glyphicon-remove"></i> 删除</button>
+            <button type="button" class="btn btn-primary" style="float:right;" onclick="window.location.href='add.html'"><i class="glyphicon glyphicon-plus"></i> 新增</button>
+            <br>
+            <hr style="clear:both;">
+            <div class="table-responsive">
+                <table class="table  table-bordered">
+                    <thead>
+                    <tr >
+                        <th width="30">#</th>
+                        <th width="30"><input type="checkbox"></th>
+                        <th>账号</th>
+                        <th>名称</th>
+                        <th>邮箱地址</th>
+                        <th width="100">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="userTableBody">
+                    <tr>
+                        <!--<td>1</td>
+                        <td><input type="checkbox"></td>
+                        <td>Lorem</td>
+                        <td>ipsum</td>
+                        <td>dolor</td>
+                        <td>
+                            <button type="button" class="btn btn-success btn-xs"><i class=" glyphicon glyphicon-check"></i></button>
+                            <button type="button" class="btn btn-primary btn-xs"><i class=" glyphicon glyphicon-pencil"></i></button>
+                            <button type="button" class="btn btn-danger btn-xs"><i class=" glyphicon glyphicon-remove"></i></button>
+                        </td>-->
+                    </tr>
+
+                    </tbody>
+                    <tfoot>
+                    <tr >
+                        <td colspan="6" align="center">
+                            <ul class="pagination">
+                                <!--<li class="disabled"><a href="#">上一页</a></li>
+                                <li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
+                                <li><a href="#">2</a></li>
+                                <li><a href="#">3</a></li>
+                                <li><a href="#">4</a></li>
+                                <li><a href="#">5</a></li>
+                                <li><a href="#">下一页</a></li>-->
+                            </ul>
+                        </td>
+                    </tr>
+
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script type="text/javascript" src="../jquery/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="../bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../script/docs.min.js"></script>
+<script type="text/javascript" src="../jquery/layer/layer.js"></script>
+<script id="js1" type="text/javascript">
+
+
+        pageQuery(1);
+
+
+    //高级查询
+    $("#queryButton").click(function(){
+        var queryTest =  $("#queryTest");
+        if(queryTest.val() == ""){
+            layer.msg("请输入查询条件！",{time:1500, icon:5, shift:6},function(){
+                queryTest.focus();
+            });
+        }else{
+            cond = true;
+            //alert(1111);
+            pageQuery(1);
+        }
+    });
+
+
+
+    function changePageNo(pageNo){
+        location.href="${APP_PATH}/manager/user/list.htm?pageno="+pageNo;
+    }
+    var loadIndex=-1;
+    function changePageNo(pageNo){
+        location.href="${APP_PATH}/manager/user/list.htm?pageno="+pageNo;
+    }
+    var cond =false;
+    var loadIndex=-1;
+    function pageQuery(pageno){
+        var jsonData = {
+            pageno:pageno,
+            pageSize:4
+        }
+        if(cond){
+            //第一种写法
+            //jsonData.querytext = $("#queryTest").val();
+            //第二种写法
+            jsonData["querytext"] = $("#queryTest").val();
+        }
+        $.ajax({
+            type:"POST",
+            url:"/managers/UserpageQuery.do",
+            cache : true,
+            async : false,
+            data:jsonData,
+            beforeSend:function(){
+                loadingIndex = layer.load(2, {time: 10*1000});
+            },
+            success:function(result){
+                layer.close(loadingIndex);
+                if(result.success){
+                    var pageObj = result.pageBean;
+                    var userList = pageObj.datas;
+                    //alert(userList);
+                    var userContent="";
+                    //循环取数据到页面上显示
+                    $.each(userList,function(i,user){
+                        userContent+="<tr><td>"+(user.id)+"</td>";
+                        userContent+="<td><input type='checkbox'></td>";
+                        userContent+="<td>"+user.loginacct+"</td>";
+                        userContent+="<td>"+user.username+"</td>";
+                        userContent+="<td>"+user.email+"</td>";
+                        userContent+="<td><button type='button' class='btn btn-success btn-xs'>";
+                        userContent+="<i class=' glyphicon glyphicon-check'></i></button>";
+                        userContent+="<button type='button' onclick='test123()' class='btn btn-primary btn-xs'>";
+                        userContent+="<input type='hidden' name='userid' value='"+((user.id))+"'/>";
+                        userContent+="<input type='hidden' name='loginacct' value='"+user.loginacct+"'/>";
+                        userContent+="<input type='hidden' name='username' value='"+user.username+"'/>";
+                        userContent+="<input type='hidden' name='email' value='"+user.email+"'/>";
+                        userContent+="<i class='glyphicon glyphicon-pencil'></i></button>";
+                        userContent+="  <button type='button' class='btn btn-danger btn-xs'>";
+                        userContent+="  <i class=' glyphicon glyphicon-remove'></i></button>";
+                        userContent+="</td> </tr>";
+                    });
+
+                    //表格数据
+                    //$("#userTableBody").empty();
+                    //$("#userTableBody").append(userContent);
+                    $("#userTableBody").html(userContent);
+                    //页码
+                    var pageingConten="";
+                    if(pageno!=1){
+                        pageingConten+='<li><a href="javascript:void(0)" onclick="pageQuery('+(pageno-1)+')">上一页</a></li>';
+                    }
+                    for(var i=1;i<=pageObj.totalno;i++){
+                        pageingConten+='<li '+(pageno==i?'class="active"':'')+'><a href="javascript:void(0)" onclick="pageQuery('+i+')">'+i+'</a> </li>';
+                    }
+                    if(pageno!=pageObj.totalno){
+                        pageingConten+='<li><a href="javascript:void(0)" onclick="pageQuery('+(pageno+1)+')">下一页</a></li>';
+                    }
+                    $(".pagination").html(pageingConten);
+                }else{
+                    layer.msg("用户分页数据查询失败！",{time:1500, icon:5, shift:6});
+                }
+            }
+        });
+    }
+
+
+    function test123(ob) {
+        var id=$(ob).children("input[name='userid']").val();
+        var loginacct=$(ob).children("input[name='loginacct']").val();
+        var username=$(ob).children("input[name='username']").val();
+        var email=$(ob).children("input[name='email']").val();
+        window.location.href = "/managers/gotoEdit.do?id="+id+"&loginacct="+loginacct+"&username="+username
+        +"&email="+email;
+       }
+</script>
+</body>
+</html>
+
